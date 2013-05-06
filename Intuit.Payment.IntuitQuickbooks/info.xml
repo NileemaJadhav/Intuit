@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <extension key="Intuit.Payment.IntuitQuickbooks" type="payment">
+<downloadUrl>https://github.com/webaccess/CiviCRM-Intuit-Payment-Processor</downloadUrl>
+  <file>IntuitQuickbooks</file>
+  <name>IntuitQuickbooks</name>
+  <description>Payment Processor</description>
+  <urls>
+    <url desc="Main Extension Page"></url>
+    <url desc="Documentation"></url>
+    <url desc="Support"></url>
+    <url desc="Licensing"></url>
+  </urls>
+  <license></license>
+  <maintainer>
+    <author>test</author>
+    <email>priyesh.khare@webaccess.co.in</email>
+  </maintainer>
+  <releaseDate>2013-01-16</releaseDate>
+  <version>1.1</version>
+  <develStage>beta</develStage>
+  <compatibility><ver>4.2.7</ver></compatibility>
+  <comments>test</comments>
+ <typeInfo>
+   <userNameLabel>Application Login</userNameLabel>
+   <passwordLabel>Connection Ticket</passwordLabel>
+   <signatureLabel>Application ID</signatureLabel>
+   <subjectLabel></subjectLabel>
+   <urlSiteDefault>https://webmerchantaccount.quickbooks.com/j/AppGateway</urlSiteDefault>
+   <urlApiDefault></urlApiDefault>
+   <urlRecurDefault></urlRecurDefault>
+   <urlSiteTestDefault>https://webmerchantaccount.ptc.quickbooks.com/j/AppGateway</urlSiteTestDefault>
+   <urlApiTestDefault></urlApiTestDefault>
+   <urlRecurTestDefault></urlRecurTestDefault>
+   <urlButtonDefault></urlButtonDefault>
+   <urlButtonTestDefault></urlButtonTestDefault>
+   <billingMode>form</billingMode>
+   <isRecur>1</isRecur>
+   <paymentType>1</paymentType>
+  </typeInfo>
+</extension>
