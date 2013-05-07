@@ -1,6 +1,6 @@
 <?php
 
-class CRM_RedfinRecurContribution {
+class CRM_intuitQuickbooksRecurContribution {
     
   function __construct() 
   {
@@ -35,29 +35,23 @@ class CRM_RedfinRecurContribution {
     $config = CRM_Core_Config::singleton();
   }
 
-  function redfinContribution( )
+  function IntuitQuickbooksRecurContribution( )
   {
     require_once 'CRM/Core/BAO/PaymentProcessor.php';
-    require_once 'CRM/Utils/System.php';
     require_once 'CRM/Contribute/BAO/Contribution.php';
-    require_once 'CRM/Core/BAO/MessageTemplates.php';
-    require_once 'CRM/Core/BAO/UFMatch.php';
-    require_once 'api/v2/Contact.php';
     require_once 'CRM/Core/Extensions.php';
-    require_once 'CRM/Core/DAO.php';
     require_once 'CRM/Core/BAO/FinancialTrxn.php';
     require_once 'CRM/Contribute/BAO/ContributionPage.php';
-    require_once 'CRM/Core/OptionGroup.php';  
     require_once 'CRM/Contribute/PseudoConstant.php';
-    require_once 'CRM/Utils/Cache.php';
-    require_once 'CRM/Core/Payment.php';
+    require_once 'CRM/Core/PseudoConstant.php';
+    require_once 'CRM/Contribute/BAO/ContributionRecur.php';
+
 
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
     $paymentProcessorClass = 'Intuit.Payment.IntuitQuickbooks';
     $extension = new CRM_Core_Extensions();
     if ( $extension->isExtensionKey( $paymentProcessorClass ) ) {
       $paymentClass = $extension->keyToClass( $paymentProcessorClass, 'Intuit_Payment_IntuitQuickbooks' );
-      require_once( $extension->classToPath( $paymentClass ) );
     } else {                
       $paymentClass = "CRM_Core_" . $paymentProcessorClass;
       require_once( str_replace( '_', DIRECTORY_SEPARATOR , $paymentClass ) . '.php' );
@@ -127,7 +121,7 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
       $details = array( ); 
       $address = array( );
       $todays_date = date("Y-m-d"); 
-      $today = strtotime($todays_date); 
+      $today = strtotime($todays_date);
       $expiration_date = strtotime($recurResult->cancel_date);
       if((($recurResult->contribution_status_id == 3) && isset($expiration_date) && ($expiration_date == $today))|| ($freqInstall == $nCount && $recurResult->contribution_status_id == 2)) {
         $wallet[0] = $recurResult->invoice_id;
@@ -160,8 +154,7 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
                   
         $response = self::sendToIntuit( $gatewayUrl, $PHP_QBMSXML[1], $pemFile );
         $xml = simplexml_load_string($response);
-        require_once 'CRM/Contribute/BAO/ContributionRecur.php';
-          
+         
         $recurResult1 = CRM_Contribute_BAO_ContributionRecur::getRecurContributions($contriParams['contact_id']);
         $array = $recurResult1;          
           
@@ -179,7 +172,6 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
         CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur', $recurResult->id, 
                                      'contribution_status_id', $completed );
         CRM_Contribute_BAO_ContributionPage::recurringNofify(CRM_Core_Payment::RECURRING_PAYMENT_END,$contriParams['contact_id'],$contriParams['contribution_page_id'],$object,false);
-          
       }elseif(($freqInstall > $nCount) && ($recurResult->contribution_status_id == 2) ) {
         $PHP_QBMSXML[1] = '<?xml version="1.0"?> 
         <?qbmsxml version="4.5"?>
@@ -243,7 +235,7 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
                                   'net_amount'        => CRM_Utils_Array::value( 'net_amount', $contriParams['trxn_id'], $contriParams['total_amount'] ),
                                   'currency'          => $contribution->currency,
                                   'payment_processor' => $defaults['name'],
-                                  'trxn_id'           => $params['trxn_id'],
+                                  'trxn_id'           => $contriparams['trxn_id'],
                                   'trxn_result_code'  => NULL,
                                   );
               $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
@@ -304,7 +296,6 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
         </QBMSXML>';
           $response = self::sendToIntuit( $gatewayUrl, $PHP_QBMSXML[2], $pemFile );
           $xml = simplexml_load_string($response);
-          require_once 'CRM/Contribute/BAO/ContributionRecur.php';
 
           $recurResult1 = CRM_Contribute_BAO_ContributionRecur::getRecurContributions($contriParams['contact_id']);
           $array = $recurResult1;
@@ -321,15 +312,14 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
           CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur', $recurResult->id, 
                                        'contribution_status_id', $completed );
             
-          CRM_Contribute_BAO_ContributionPage::recurringNofify(CRM_Core_Payment::RECURRING_PAYMENT_END,$firstParams['contact_id'],$firstParams['contribution_page_id'],$object,false);       
+          CRM_Contribute_BAO_ContributionPage::recurringNofify(CRM_Core_Payment::RECURRING_PAYMENT_END,$firstParams['contact_id'],$firstParams['contribution_page_id'],$object,false);
 
         }
-      }
+      }     
     }
   } 
 
   function contribution_receipt($contriParams,$firstParams, $contributionid){
-
                 
     CRM_Core_DAO::commonRetrieveAll( 'CRM_Contribute_DAO_ContributionPage', 'id', $contriParams['contribution_page_id'], $getInfo, NULL );
     foreach ( $getInfo as $Key => $values ) {
@@ -368,14 +358,11 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
     $smarty->assign( 'trxn_id',$trxnid['0'] );
     $smarty->assign( 'billingName', $billingName );
     $smarty->assign( 'is_monetary',$values['is_monetary'] );
-    CRM_Contribute_BAO_ContributionPage::sendMail( $contriParams['contact_id'], $values, $isTest , $returnMessageText = false ); 
+
+    CRM_Contribute_BAO_ContributionPage::sendMail( $contriParams['contact_id'], $values, $isTest , $returnMessageText = false );
     CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_Contribution', $contributionid, 'thankyou_date', $today );
-
-            
-
-
-
   }
+
   function getParams( $trid ) 
   {
     CRM_Core_DAO::commonRetrieveAll( 'CRM_Contribute_DAO_Contribution', 'invoice_id', $trid, $details, NULL );
@@ -402,7 +389,7 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
   }
 
   /**
-   * sendToIntuit function used to send the params to redfin and get the response
+   * sendToIntuit function used to send the params to intuit and get the response
    */
   function sendToIntuit( $url, $parameters, $pemFile) {
     $server =  $url;
@@ -445,5 +432,5 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
 
   }
 
-$obj = new CRM_RedfinRecurContribution( );
-$obj->redfinContribution( );
+$obj = new CRM_IntuitQuickbooksRecurContribution( );
+$obj->IntuitQuickbooksRecurContribution( );

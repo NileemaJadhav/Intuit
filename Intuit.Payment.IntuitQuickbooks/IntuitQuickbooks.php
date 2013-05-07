@@ -228,8 +228,8 @@ class Intuit_Payment_IntuitQuickbooks extends CRM_Core_Payment {
       $recur = new CRM_Contribute_DAO_ContributionRecur( );
       $recur->id = $params['contributionRecurID'];
       $recur->find( true ); 
-      require_once 'CRM/Contribute/BAO/ContributionPage.php';
       $subscriptionPaymentStatus = 'START';
+      require_once 'CRM/Contribute/BAO/ContributionPage.php';
       CRM_Contribute_BAO_ContributionPage::recurringNofify( $subscriptionPaymentStatus, $params['contactID'],
                                                             $params['contributionPageID'], $recur );
     }else {
@@ -330,7 +330,7 @@ class Intuit_Payment_IntuitQuickbooks extends CRM_Core_Payment {
   }
 
   /**
-   * sendToIntuit function used to send the params to redfin and get the response
+   * sendToIntuit function used to send the params to intuit and get the response
    */
   function sendToIntuit( $url, $parameters, $pemFile) {
     $server =  $url;
@@ -390,7 +390,6 @@ class Intuit_Payment_IntuitQuickbooks extends CRM_Core_Payment {
                         'trxn_id'           => $params['trxn_id'],
                         'trxn_result_code'  => NULL,
                         );
-        
     require_once 'CRM/Core/BAO/FinancialTrxn.php';
     $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
   }
