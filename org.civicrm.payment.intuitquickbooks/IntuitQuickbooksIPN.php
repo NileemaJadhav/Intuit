@@ -1,6 +1,6 @@
 <?php
 
-class CRM_intuitQuickbooksRecurContribution {
+class org_civicrm_payment_intuitquickbooks_IntuitQuickbooksIPN {
     
   function __construct() 
   {
@@ -48,10 +48,10 @@ class CRM_intuitQuickbooksRecurContribution {
 
 
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
-    $paymentProcessorClass = 'Intuit.Payment.IntuitQuickbooks';
+    $paymentProcessorClass = 'org_civicrm_payment_intuitquickbooks';
     $extension = new CRM_Core_Extensions();
     if ( $extension->isExtensionKey( $paymentProcessorClass ) ) {
-      $paymentClass = $extension->keyToClass( $paymentProcessorClass, 'Intuit_Payment_IntuitQuickbooks' );
+      $paymentClass = $extension->keyToClass( $paymentProcessorClass, 'org_civicrm_payment_intuitquickbooks' );
     } else {                
       $paymentClass = "CRM_Core_" . $paymentProcessorClass;
       require_once( str_replace( '_', DIRECTORY_SEPARATOR , $paymentClass ) . '.php' );
@@ -432,5 +432,5 @@ INNER JOIN  civicrm_contribution_recur recur ON ( recur.id = contri.contribution
 
   }
 
-$obj = new CRM_IntuitQuickbooksRecurContribution( );
+$obj = new org_civicrm_payment_intuitquickbooks_IntuitQuickbooksIPN( );
 $obj->IntuitQuickbooksRecurContribution( );

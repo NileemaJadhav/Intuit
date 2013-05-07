@@ -23,7 +23,7 @@
 require_once 'CRM/Core/Payment.php';
 
 
-class Intuit_Payment_IntuitQuickbooks extends CRM_Core_Payment {
+class org_civicrm_payment_intuitquickbooks extends CRM_Core_Payment {
   static protected $_mode = null;
     
 
@@ -297,7 +297,7 @@ class Intuit_Payment_IntuitQuickbooks extends CRM_Core_Payment {
   static function &singleton( $mode, &$paymentProcessor ) {
     $processorName = $paymentProcessor['name'];
     if (self::$_singleton[$processorName] === null ) {
-      self::$_singleton[$processorName] = new Intuit_Payment_IntuitQuickbooks( $mode, $paymentProcessor );
+      self::$_singleton[$processorName] = new org_civicrm_payment_intuitquickbooks( $mode, $paymentProcessor );
     }
     return self::$_singleton[$processorName];
   }
